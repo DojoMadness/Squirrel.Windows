@@ -90,7 +90,7 @@ namespace Squirrel.Tests.TestHelpers
                     IntegrationTestHelper.GetPath("fixtures", "NotSquirrelAwareApp.exe"), 
                     Path.Combine(targetDir, "NotSquirrelAwareApp.exe"));
 
-                var psi = new ProcessStartInfo(nuget, "pack " + Path.Combine(targetDir, nuspecFile)) {
+                var psi = new ProcessStartInfo(nuget, "pack \"" + Path.Combine(targetDir, nuspecFile) + "\"") {
                     RedirectStandardError = true,
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
