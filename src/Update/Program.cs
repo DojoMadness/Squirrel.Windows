@@ -28,6 +28,8 @@ namespace Squirrel.Update
 
         public static int Main(string[] args)
         {
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+
             var pg = new Program();
             try {
                 return pg.main(args);
