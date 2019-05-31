@@ -43,11 +43,24 @@ void MitigateDllHijacking()
 	PreloadLibs();
 }
 
+bool Is32BitSystem()
+{
+	SYSTEM_INFO systemInfo;
+	GetNativeSystemInfo(&systemInfo);
+	return systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL;
+}
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                       _In_opt_ HINSTANCE hPrevInstance,
                       _In_ LPWSTR lpCmdLine,
                       _In_ int nCmdShow)
 {
+	if (Is32BitSystem())
+	{
+		CUpdateRunner::DisplayErrorMessage(CString(L"This program requires a 64bit system."), NULL);
+		return -1;
+	}
+
 	MitigateDllHijacking();	
 
 	int exitCode = -1;
