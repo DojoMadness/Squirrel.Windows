@@ -67,15 +67,21 @@ namespace Squirrel
                 return new UpdateInfo(currentVersion, Enumerable.Empty<ReleaseEntry>(), packageDirectory);
             }
 
-            var newerThanUs = availableReleases
-                .Where(x => x.Version > currentVersion.Version)
-                .OrderBy(v => v.Version);
+            var newerDeltasThanUs = availableReleases
+                .Where(x => x.IsDelta && x.Version > currentVersion.Version)
+                .OrderBy(v => v.Version)
+                .ToArray();
 
-            var deltasSize = newerThanUs.Where(x => x.IsDelta).Sum(x => x.Filesize);
-
-            return (deltasSize < latestFull.Filesize && deltasSize > 0) ? 
-                new UpdateInfo(currentVersion, newerThanUs.Where(x => x.IsDelta).ToArray(), packageDirectory) : 
-                new UpdateInfo(currentVersion, new[] { latestFull }, packageDirectory);
+            if (newerDeltasThanUs.Length > 1)
+            {
+                // If more than one delta is to apply, install the full version as a full install is faster
+                // in our case than applying multiple deltas. We don't care for download size.
+                return new UpdateInfo(currentVersion, new[] {latestFull}, packageDirectory);
+            }
+            else
+            {
+                return new UpdateInfo(currentVersion, newerDeltasThanUs, packageDirectory);
+            }
         }
     }
 }
